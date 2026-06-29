@@ -1,0 +1,58 @@
+ระบบสต๊อกสินค้า
+
+
+database
+
+CREATE DATABASE StockDB;
+GO
+
+USE [StockDB]
+GO
+/****** Object:  Table [dbo].[product_master]    Script Date: 29/06/2026 21:42:21 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[product_master](
+	[product_id] [nvarchar](50) NOT NULL,
+	[product_name] [nvarchar](50) NULL,
+	[product_price] [decimal](18, 2) NULL,
+ CONSTRAINT [PK_product_master] PRIMARY KEY CLUSTERED 
+(
+	[product_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[product_stock]    Script Date: 29/06/2026 21:42:21 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[product_stock](
+	[stock_id] [nvarchar](50) NOT NULL,
+	[product_id] [nvarchar](50) NULL,
+	[stock_remain] [int] NULL,
+ CONSTRAINT [PK_product_stock] PRIMARY KEY CLUSTERED 
+(
+	[stock_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00001     ', N'Mouse Pad', CAST(699.00 AS Decimal(18, 2)))
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00002     ', N'Standee 15cm', CAST(350.00 AS Decimal(18, 2)))
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00003     ', N'Postcard Set', CAST(150.00 AS Decimal(18, 2)))
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00004     ', N'Keychain', CAST(150.00 AS Decimal(18, 2)))
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00005     ', N'Comic', CAST(350.00 AS Decimal(18, 2)))
+INSERT [dbo].[product_master] ([product_id], [product_name], [product_price]) VALUES (N'00006     ', N'Dakimakura', CAST(1200.00 AS Decimal(18, 2)))
+GO
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0001      ', N'00001     ', 2)
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0002      ', N'00002     ', 2)
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0003      ', N'00003     ', 7)
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0004      ', N'00004     ', 10)
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0005      ', N'00005     ', 5)
+INSERT [dbo].[product_stock] ([stock_id], [product_id], [stock_remain]) VALUES (N'0006      ', N'00006     ', 0)
+GO
+
+
+
+—-------------------------------------------------------------------------------
