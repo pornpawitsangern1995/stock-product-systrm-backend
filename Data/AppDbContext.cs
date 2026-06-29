@@ -16,7 +16,7 @@ namespace StockSystemBack.Data
             modelBuilder.Entity<ProductStock>(entity =>
             {
                 entity.ToTable("product_stock");
-                entity.HasKey(e => e.stock_id);  // ✅ กำหนด PK ตรงนี้
+                entity.HasKey(e => e.stock_id);
                 entity.Property(e => e.stock_id).ValueGeneratedNever();
             });
         }
