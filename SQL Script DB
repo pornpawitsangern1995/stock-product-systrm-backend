@@ -1,5 +1,11 @@
 ระบบสต๊อกสินค้า
 
+ในส่วนของโค้ด C# 
+ไฟล์ appsettings.json
+ต้องเปลี่ยน ConnectionStrings > DefaultConnection
+Server=LAPTOP-0N19C26K\\SQLEXPRESS
+เป็น server name ของคุณด้วย
+
 
 database
 
