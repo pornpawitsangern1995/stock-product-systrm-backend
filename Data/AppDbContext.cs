@@ -6,6 +6,7 @@ namespace StockSystemBack.Data
     {
         public DbSet<ProductMaster> ProductMaster { get; set; }
         public DbSet<ProductStock> ProductStock { get; set; }
+        public DbSet<ShoppingCart> ShoppingCart { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
@@ -19,6 +20,11 @@ namespace StockSystemBack.Data
                 entity.HasKey(e => e.stock_id);
                 entity.Property(e => e.stock_id).ValueGeneratedNever();
             });
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ShoppingCart>().HasKey(x => x.cart_id);
+
+            modelBuilder.Entity<ShoppingCart>().Property(x => x.cart_id).ValueGeneratedOnAdd();
         }
     }
 }
