@@ -189,10 +189,7 @@ namespace StockSystemBack.Controllers
                     }
 
                     cart.qty = newQty;
-
-                    _context.Entry(cart)
-                        .Property(x => x.qty)
-                        .IsModified = true;
+                    _context.Entry(cart).Property(x => x.qty).IsModified = true;
                 }
 
                 await _context.SaveChangesAsync();
@@ -209,11 +206,7 @@ namespace StockSystemBack.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-
-                return StatusCode(
-                    500,
-                    $"Error: {ex.Message}"
-                );
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -230,23 +223,17 @@ namespace StockSystemBack.Controllers
                 return BadRequest("Invalid quantity.");
             }
 
-            using var transaction =
-                await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
                 productId = productId.Trim();
 
-                var cart = await _context.ShoppingCart
-                    .FirstOrDefaultAsync(
-                        c => c.product_id.Trim() == productId
-                    );
+                var cart = await _context.ShoppingCart.FirstOrDefaultAsync(c => c.product_id.Trim() == productId);
 
                 if (cart == null)
                 {
-                    return NotFound(
-                        $"Cart item not found : {productId}"
-                    );
+                    return NotFound($"Cart item not found : {productId}");
                 }
 
                 // ถ้า qty = 0 ให้ลบออกจาก cart
@@ -265,38 +252,27 @@ namespace StockSystemBack.Controllers
                 }
 
                 // ตรวจ stock
-                var stock = await _context.ProductStock
-                    .FirstOrDefaultAsync(
-                        s => s.product_id.Trim() == productId
-                    );
+                var stock = await _context.ProductStock.FirstOrDefaultAsync(s => s.product_id.Trim() == productId);
 
                 if (stock == null)
                 {
-                    return NotFound(
-                        $"Stock Not Found : {productId}"
-                    );
+                    return NotFound($"Stock Not Found : {productId}");
                 }
 
                 if (request.qty > stock.stock_remain)
                 {
                     return Conflict(new
                     {
-                        message =
-                            $"จำนวนสินค้าเกิน stock คงเหลือ {stock.stock_remain} ชิ้น",
-
+                        message = $"จำนวนสินค้าเกิน stock คงเหลือ {stock.stock_remain} ชิ้น",
                         productId,
-
                         productStock = stock.stock_remain,
-
                         requestedQty = request.qty
                     });
                 }
 
                 cart.qty = request.qty;
 
-                _context.Entry(cart)
-                    .Property(x => x.qty)
-                    .IsModified = true;
+                _context.Entry(cart).Property(x => x.qty).IsModified = true;
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -311,11 +287,7 @@ namespace StockSystemBack.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-
-                return StatusCode(
-                    500,
-                    $"Error: {ex.Message}"
-                );
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -325,33 +297,22 @@ namespace StockSystemBack.Controllers
             {
                 productId = productId.Trim();
 
-                var cart = await _context.ShoppingCart
-                    .FirstOrDefaultAsync(
-                        c => c.product_id.Trim() == productId
-                    );
+                var cart = await _context.ShoppingCart.FirstOrDefaultAsync(c => c.product_id.Trim() == productId);
 
                 if (cart == null)
                 {
-                    return NotFound(
-                        $"Cart item not found : {productId}"
-                    );
+                    return NotFound($"Cart item not found : {productId}");
                 }
 
                 _context.ShoppingCart.Remove(cart);
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new
-                {
-                    message = "Remove cart success"
-                });
+                return Ok(new{message = "Remove cart success"});
             }
             catch (Exception ex)
             {
-                return StatusCode(
-                    500,
-                    $"Error: {ex.Message}"
-                );
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -360,13 +321,11 @@ namespace StockSystemBack.Controllers
         {
             try
             {
-                var carts = await _context.ShoppingCart
-                    .ToListAsync();
+                var carts = await _context.ShoppingCart.ToListAsync();
 
                 if (carts.Any())
                 {
                     _context.ShoppingCart.RemoveRange(carts);
-
                     await _context.SaveChangesAsync();
                 }
 
@@ -377,10 +336,7 @@ namespace StockSystemBack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(
-                    500,
-                    $"Error: {ex.Message}"
-                );
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -391,35 +347,25 @@ namespace StockSystemBack.Controllers
 
             try
             {
-                var carts = await _context.ShoppingCart
-                    .ToListAsync();
+                var carts = await _context.ShoppingCart.ToListAsync();
 
                 if (!carts.Any())
                 {
-                    return BadRequest(
-                        "No Product in your Cart!"
-                    );
+                    return BadRequest("No Product in your Cart!");
                 }
+
+                var orderDate = DateTime.Now;
 
                 foreach (var cart in carts)
                 {
                     var productId = cart.product_id.Trim();
 
-                    var stock = await _context.ProductStock
-                        .FirstOrDefaultAsync(
-                            s => s.product_id.Trim() == productId
-                        );
+                    var stock = await _context.ProductStock.FirstOrDefaultAsync(s => s.product_id.Trim() == productId);
 
                     if (stock == null)
                     {
                         await transaction.RollbackAsync();
-
-                        return NotFound(new
-                        {
-                            message =
-                                $"Stock Not Found : {productId}",
-                            productId
-                        });
+                        return NotFound(new { message = $"Stock Not Found : {productId}", productId});
                     }
 
                     // ตรวจ stock อีกครั้งก่อนตัดจริง
@@ -429,30 +375,32 @@ namespace StockSystemBack.Controllers
 
                         return Conflict(new
                         {
-                            message =
-                                $"สินค้า {productId} มี stock ไม่เพียงพอ",
-
+                            message = $"สินค้า {productId} มี stock ไม่เพียงพอ",
                             productId,
-
                             cartQty = cart.qty,
-
                             productStock = stock.stock_remain
                         });
                     }
 
+                    // บันทึก order
+                    var order = new ShoppingOrder
+                    {
+                        product_id = productId,
+                        qty = cart.qty,
+                        order_date = orderDate
+                    };
+
+                    _context.ShoppingOrder.Add(order);
+
                     // หัก stock
                     stock.stock_remain -= cart.qty;
-
-                    _context.Entry(stock)
-                        .Property(x => x.stock_remain)
-                        .IsModified = true;
+                    _context.Entry(stock).Property(x => x.stock_remain).IsModified = true;
                 }
 
                 // ตัด stock สำเร็จ -> clear cart
                 _context.ShoppingCart.RemoveRange(carts);
 
                 await _context.SaveChangesAsync();
-
                 await transaction.CommitAsync();
 
                 return Ok(new
@@ -463,11 +411,43 @@ namespace StockSystemBack.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                return StatusCode(500, $"Checkout Error: {ex.Message}" );
+            }
+        }
 
-                return StatusCode(
-                    500,
-                    $"Checkout Error: {ex.Message}"
-                );
+        [HttpGet("shopping-order")]
+        public async Task<IActionResult> GetShoppingOrder()
+        {
+            try
+            {
+                var orders = await _context.ShoppingOrder
+                    .AsNoTracking()
+                    .OrderByDescending(x => x.order_date)
+                    .ThenByDescending(x => x.order_id)
+                    .ToListAsync();
+                var products = await _context.ProductMaster.AsNoTracking().ToListAsync();
+
+                var result = orders.Select(od =>
+                {
+                    var findProduct = products.FirstOrDefault(p => p.product_id.Trim() == od.product_id.Trim());
+
+                    return new
+                    {
+                        orderId = od.order_id,
+                        productId = od.product_id != null ? od.product_id.Trim() : "",
+                        productName = findProduct != null ? findProduct.product_name : "",
+                        productPrice = findProduct != null ? findProduct.product_price : 0,
+                        qty = od.qty,
+                        totalPrice = od.qty * (findProduct != null ? findProduct.product_price : 0),
+                        orderDate = od.order_date
+                    };
+                }).ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
